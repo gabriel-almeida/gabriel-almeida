@@ -1,26 +1,44 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <TheHeader />
-    <div class="flex-1">
-      <textarea cols="100" rows="10" v-model="text" />
-
-      {{ percentage }} %
-      <input
-        type="range"
-        max="100"
-        min="1"
-        class="range"
-        v-model="percentage"
-      />
-      <p v-for="sentence of summary" :key="sentence.idx">
-        <span
-          :class="{ 'bg-yellow-200': sentence.highlight }"
-          :title="JSON.stringify(sentence.scores)"
-        >
-          {{ sentence.sent }}
-        </span>
-      </p>
-      <!-- {{scores}} -->
+    <div class="container mx-auto min-h-full">
+      <div class="flex flex-row flex-wrap py-4">
+        <div class="w-full md:w-1/4 px-2">
+          <div class="sticky top-0 p-4 w-full">
+            <!-- navigation -->
+            <div class="flex flex-col overflow-hidden">
+              <div class="form-control">
+                <textarea
+                  class="textarea h-36 w-full textarea-bordered"
+                  placeholder="Text to summarize"
+                  v-model="text"
+                />
+              </div>
+              <div class="p-4">
+                {{ percentage }} % - {{ nSentences }} fragment(s)
+                <input
+                  type="range"
+                  max="100"
+                  :min="step"
+                  class="range"
+                  :step="step"
+                  v-model="percentage"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div role="main" class="w-full sm:w-2/3 md:w-3/4 pt-1 px-2">
+          <p v-for="sentence of summary" :key="sentence.idx">
+            <span
+              :class="{ 'bg-yellow-200': sentence.highlight }"
+              :title="humanizeMetrics(sentence.scores)"
+            >
+              {{ sentence.sent }}
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
     <TheFooter />
   </div>
@@ -39,15 +57,39 @@ export default {
     scores() {
       return summarizer.summarize(this.text)
     },
+    step() {
+      return !this.scores
+        ? 1
+        : Math.max(Math.trunc(100 / this.scores.nSentences), 1)
+    },
+    nSentences() {
+      return !this.scores
+        ? 0
+        : 1 + Math.trunc((this.scores.nSentences * this.percentage) / 100)
+    },
     summary() {
       if (!this.scores) return
-      const size = Math.trunc((this.scores.nSentences * this.percentage) / 100)
       return this.scores.sentences.map((sent, idx) => ({
         sent,
         idx,
-        highlight: this.scores.importanceRank[idx] <= size,
+        highlight: this.scores.importanceRank[idx] < this.nSentences,
         scores: this.scores.normalizedScores[idx],
       }))
+    },
+  },
+  methods: {
+    humanizeMetrics(normizedScores) {
+      const humanizedNames = Object.entries({
+        bm25: "Most 'Relevant'",
+        freq: 'Most Frequents',
+        upper: 'Capitalized Letters',
+      })
+      return "Metrics: \n" + humanizedNames
+        .map(
+          ([scoreName, humanName]) =>
+            `${humanName}: ${Math.trunc(100 * normizedScores[scoreName])}`
+        )
+        .join('\n')
     },
   },
 }

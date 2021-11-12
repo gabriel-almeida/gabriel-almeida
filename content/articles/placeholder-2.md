@@ -1,6 +1,6 @@
 ---
-title: Article about me
-description: This is a description for the article about me
+title: Placeholder 2
+description: This is a placeholder 2
 img: https://images.unsplash.com/photo-1580752300992-559f8e0734e0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80
 alt: nice image
 author: 
@@ -11,7 +11,7 @@ tags:
   - javascript
 serie: Hello, world!
 ---
-## There is just so much to write about me. Where do I start?
+## Lorem
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. 
 

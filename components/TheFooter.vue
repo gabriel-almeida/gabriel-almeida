@@ -4,7 +4,7 @@
 			<div class="w-full mx-auto flex flex-wrap items-center">
 				<div class="flex w-full md:w-1/2 justify-center md:justify-start text-white font-extrabold">
                     <NuxtLink to="/" class="text-gray-900 no-underline hover:text-gray-900 hover:no-underline">
-					    <span class="text-base text-gray-200">Gabriel Almeida</span>
+					    <span class="text-base text-gray-200">Gabriel Almeida - 2021</span>
                     </NuxtLink>
 				</div>
 				<!-- <div class="flex w-full pt-2 content-center justify-between md:w-1/2 md:justify-end">
