@@ -13,7 +13,8 @@ function normalize(text) {
 }
 
 function segmentSentences(text) {
-  return text.split(/\n|(?:[.?!]\s)/).filter((x) => x && x.match(/[A-Za-z]/))
+  // return text.split(/\n|(?:[.?!]\s)/).filter((x) => x && x.match(/[A-Za-z]/))
+  return text.split(/\n/).filter((x) => x && x.match(/[A-Za-z]/))
 }
 
 function beginsWithUppercase(text) {
@@ -90,11 +91,12 @@ function uppercaseCount(sentIdx, procData) {
 function wordFrequency(sentIdx, procData) {
   return Object.keys(procData.frequencies[sentIdx])
     .map((tok) => procData.globalFrequencies[tok])
-    .reduce(sum)
+    .reduce(sum) / procData.sizes[sentIdx]
 }
 
 function bm25(sentIdx, procData) {
-  const [k1, b] = [1.2, 0.75]
+//   const [k1, b] = [1.2, 0.75]
+  const [k1, b] = [1.2, 1]
   const { frequencies, documentFrequencies, sizes, avgSize, nSentences } =
     procData
   const termFrequencies = frequencies[sentIdx]
@@ -108,6 +110,14 @@ function bm25(sentIdx, procData) {
 
 function normalizeScore(score, min, max) {
   return (score - min) / (max - min)
+}
+
+function argSort(arr) {
+    // [9, 1, 4, 10] => [1, 3, 2, 0]
+    const sorted = arr.map((item, idx) => [item, idx]).sort(([item1], [item2]) => item2 - item1)
+    const result = []
+    sorted.forEach(([, originalIdx], rank) => {result[originalIdx] = rank})
+    return result
 }
 
 function scorer(document) {
@@ -129,31 +139,24 @@ function scorer(document) {
   }))
   const normalizedScores = scores.map((score) => ({
     bm25: normalizeScore(score.bm25, minVals.bm25, maxVals.bm25),
-    upper: 0*normalizeScore(score.upper, minVals.upper, maxVals.upper),
+    upper: normalizeScore(score.upper, minVals.upper, maxVals.upper),
     freq: normalizeScore(score.freq, minVals.freq, maxVals.freq),
   }))
-  return { ...document, ...procData, normalizedScores }
+  const finalScores = normalizedScores.map(s => Object.values(s).reduce((a, b) => a + b))
+  const importanceRank = argSort(finalScores)
+
+  return { ...document, ...procData, normalizedScores, finalScores, importanceRank }
 }
 
-function summarize(text, targetSize) {
+function summarize(text) {
   if (!text || !text.trim()) {
-      return "";
+      return;
   }
   
   const doc = {
     sentences: segmentSentences(text),
   }
-  const scores = scorer(doc)
-  const result = Object.entries(scores.normalizedScores).map((entry) => [
-    parseInt(entry[0]),
-    doc.sentences[entry[0]],
-    entry[1],
-    Object.values(entry[1]).reduce((a, b) => a + b),
-  ])
-  result.sort((i, j) => i[3] - j[3])
-
-  const finalSize = Math.trunc(scores.nSentences*targetSize)
-  return result.slice(-finalSize).sort((i, j) => i[0] - j[0])
+  return scorer(doc)
 }
 
 export default {
