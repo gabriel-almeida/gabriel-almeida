@@ -1,15 +1,27 @@
 function tokenizer(sentence) {
   return sentence
     .split(/[\s,.!?;:([\]'"¡¿)/]+|[-'](?=[a-zA-Z])/)
-    .filter((x) => x)
+    .filter((x) => x && x.length > 2)
 }
 
 function normalize(text) {
-  return text
-    .normalize('NFD')
-    /* eslint unicorn/escape-case: "off" */
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
+  return (
+    text
+      .normalize('NFD')
+      /* eslint unicorn/escape-case: "off" */
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+  )
+}
+
+/* eslint no-unused-vars: "off" */
+function ngrams(str, n) {
+  if (str.length <= n) return [str]
+  const result = []
+  for (let i = 0; i < str.length - n + 1; i++) {
+    result.push(str.substring(i, i + n))
+  }
+  return result
 }
 
 function segmentSentences(text) {
@@ -56,15 +68,20 @@ function preproc(document) {
 
   const tokens = sentences.map(tokenizer)
 
-  const frequencies = tokens
-    .map((toks) => toks.map(normalize))
+  //   const frequencies = tokens
+  //     .map((toks) => toks.map(normalize))
+  //     .map(calculateFrequencies)
+
+  const frequencies = sentences
+    .map(normalize)
+    .map((sent) => ngrams(sent, 5))
     .map(calculateFrequencies)
 
   const sizes = tokens.map((toks) => toks.length)
 
-  const avgSize = sizes.reduce(sum) / nSentences
+  const avgSize = sizes.reduce(sum, 0) / nSentences
 
-  const globalFrequencies = frequencies.reduce(sumFrequencies)
+  const globalFrequencies = frequencies.reduce(sumFrequencies, 0)
 
   const documentFrequencies = calculateFrequencies(
     frequencies.flatMap((f) => Object.keys(f))
@@ -83,19 +100,24 @@ function preproc(document) {
 
 function uppercaseCount(sentIdx, procData) {
   const toks = procData.tokens[sentIdx]
-  return toks.length < 5
-    ? 0
-    : toks.filter(beginsWithUppercase).length / toks.length
+  const proportion = toks.filter(beginsWithUppercase).length / toks.length
+  return toks.length < 5 || proportion > 0.9 ? 0 : proportion
 }
 
 function wordFrequency(sentIdx, procData) {
-  return Object.keys(procData.frequencies[sentIdx])
-    .map((tok) => procData.globalFrequencies[tok])
-    .reduce(sum) / procData.sizes[sentIdx]
+  return (
+    Object.keys(procData.frequencies[sentIdx])
+      .map((tok) => procData.globalFrequencies[tok])
+      .reduce(sum, 0) / procData.sizes[sentIdx]
+  )
 }
 
+// function positionCounter(sentIdx) {
+//     return -sentIdx
+// }
+
 function bm25(sentIdx, procData) {
-//   const [k1, b] = [1.2, 0.75]
+  //   const [k1, b] = [1.2, 0.75]
   const [k1, b] = [1.2, 1]
   const { frequencies, documentFrequencies, sizes, avgSize, nSentences } =
     procData
@@ -105,19 +127,59 @@ function bm25(sentIdx, procData) {
     (Math.log(1 + nSentences / documentFrequencies[token]) *
       (termFrequencies[token] * (k1 + 1))) /
     (termFrequencies[token] + k1 * (1 - b + (b * sentSize) / avgSize))
-  return Object.keys(termFrequencies).map(scoreFn).reduce(sum)
+  return Object.keys(termFrequencies).map(scoreFn).reduce(sum, 0)
 }
 
-function normalizeScore(score, min, max) {
+function minMaxNormalization(score, min, max) {
   return (score - min) / (max - min)
 }
 
-function argSort(arr) {
-    // [9, 1, 4, 10] => [1, 3, 2, 0]
-    const sorted = arr.map((item, idx) => [item, idx]).sort(([item1], [item2]) => item2 - item1)
-    const result = []
-    sorted.forEach(([, originalIdx], rank) => {result[originalIdx] = rank})
-    return result
+function importanceRanking(arr) {
+  // [9, 1, 4, 10] => [1, 3, 2, 0]
+  const sorted = arr
+    .map((item, idx) => [item, idx])
+    .sort(([item1], [item2]) => item2 - item1)
+  const result = []
+  sorted.forEach(([, originalIdx], rank) => {
+    result[originalIdx] = rank
+  })
+  return result
+}
+
+function groupByFirstElement(list) {
+  const map = {}
+  list.forEach(([key, val]) => {
+    const collection = map[key]
+    if (!collection) {
+      map[key] = [val]
+    } else {
+      collection.push(val)
+    }
+  })
+  return map
+}
+function scoresStatistics(scores) {
+  const scoresByName = groupByFirstElement(scores.flatMap(Object.entries))
+  const result = {}
+  Object.keys(scoresByName).forEach((scoreName) => {
+    result[scoreName] = {
+      min: scoresByName[scoreName].reduce((a, b) => (a > b ? b : a)),
+      max: scoresByName[scoreName].reduce((a, b) => (a < b ? b : a)),
+    }
+  })
+  return result
+}
+
+function normalizeScore(score, stats) {
+  const result = {}
+  Object.keys(score).forEach((scoreName) => {
+    result[scoreName] = minMaxNormalization(
+      score[scoreName],
+      stats[scoreName].min,
+      stats[scoreName].max
+    )
+  })
+  return result
 }
 
 function scorer(document) {
@@ -126,36 +188,34 @@ function scorer(document) {
     bm25: bm25(idx, procData),
     upper: uppercaseCount(idx, procData),
     freq: wordFrequency(idx, procData),
+    // position: positionCounter(idx)
   }))
-  const maxVals = scores.reduce((a, b) => ({
-    bm25: Math.max(a.bm25, b.bm25),
-    upper: Math.max(a.upper, b.upper),
-    freq: Math.max(a.freq, b.freq),
-  }))
-  const minVals = scores.reduce((a, b) => ({
-    bm25: Math.min(a.bm25, b.bm25),
-    upper: Math.min(a.upper, b.upper),
-    freq: Math.min(a.freq, b.freq),
-  }))
-  const normalizedScores = scores.map((score) => ({
-    bm25: normalizeScore(score.bm25, minVals.bm25, maxVals.bm25),
-    upper: normalizeScore(score.upper, minVals.upper, maxVals.upper),
-    freq: normalizeScore(score.freq, minVals.freq, maxVals.freq),
-  }))
-  const finalScores = normalizedScores.map(s => Object.values(s).reduce((a, b) => a + b))
-  const importanceRank = argSort(finalScores)
 
-  return { ...document, ...procData, normalizedScores, finalScores, importanceRank }
+  const stats = scoresStatistics(scores)
+  const normalizedScores = scores.map((score) => normalizeScore(score, stats))
+  const finalScores = normalizedScores.map((s) => Object.values(s).reduce(sum))
+  const importanceRank = importanceRanking(finalScores)
+
+  return {
+    ...document,
+    ...procData,
+    normalizedScores,
+    finalScores,
+    importanceRank,
+  }
 }
 
 function summarize(text) {
   if (!text || !text.trim()) {
-      return;
+    return
   }
-  
+
   const doc = {
     sentences: segmentSentences(text),
   }
+  //   if (!doc.sentences || doc.sentences.length < 2) {
+  //       return
+  //   }
   return scorer(doc)
 }
 

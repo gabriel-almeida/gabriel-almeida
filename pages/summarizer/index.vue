@@ -9,20 +9,20 @@
             <div class="flex flex-col overflow-hidden">
               <div class="form-control">
                 <textarea
+                  v-model="text"
                   class="textarea h-36 w-full textarea-bordered"
                   placeholder="Text to summarize"
-                  v-model="text"
                 />
               </div>
               <div class="p-4">
                 {{ percentage }} % - {{ nSentences }} fragment(s)
                 <input
+                  v-model="percentage"
                   type="range"
                   max="100"
                   :min="step"
                   class="range"
                   :step="step"
-                  v-model="percentage"
                 />
               </div>
             </div>
@@ -37,6 +37,25 @@
               {{ sentence.sent }}
             </span>
           </p>
+          <div
+            v-if="mostFrequent"
+            class="
+              collapse
+              w-96
+              border
+              rounded-box
+              border-base-300
+              collapse-arrow
+            "
+          >
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium">Stats</div>
+            <div class="collapse-content">
+              <p v-for="pair of mostFrequent" :key="pair">
+                {{ pair }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,6 +95,16 @@ export default {
         scores: this.scores.normalizedScores[idx],
       }))
     },
+    mostFrequent() {
+      if (!this.scores) return
+      return Object.entries(this.scores.globalFrequencies)
+        .filter(([word]) => this.scores.documentFrequencies[word] > 10)
+        .sort(([, freq1], [, freq2]) => freq2 - freq1)
+        .map(
+          ([word, freq]) =>
+            `${word}: ${freq} occ. / ${this.scores.documentFrequencies[word]} fragments`
+        )
+    },
   },
   methods: {
     humanizeMetrics(normizedScores) {
@@ -83,13 +112,17 @@ export default {
         bm25: "Most 'Relevant'",
         freq: 'Most Frequents',
         upper: 'Capitalized Letters',
+        // position: 'Position'
       })
-      return "Metrics: \n" + humanizedNames
-        .map(
-          ([scoreName, humanName]) =>
-            `${humanName}: ${Math.trunc(100 * normizedScores[scoreName])}`
-        )
-        .join('\n')
+      return (
+        'Metrics: \n' +
+        humanizedNames
+          .map(
+            ([scoreName, humanName]) =>
+              `${humanName}: ${Math.trunc(100 * normizedScores[scoreName])}`
+          )
+          .join('\n')
+      )
     },
   },
 }
