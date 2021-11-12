@@ -1,13 +1,17 @@
 <template>
   <!-- <div class="m-8"> -->
-      <div>
+  <div>
     <TheMainHeader />
 
     <div class="container px-4 md:px-0 max-w-6xl mx-auto -mt-32">
-        <div class="flex flex-wrap justify-between pt-12 -mx-6">
-            <ArticleCard v-for="article of articles" :key="article.slug" :article="article" />
-        </div>
-        <Subscribe v-if="false"/>
+      <div class="flex flex-wrap justify-between pt-12 -mx-6">
+        <ArticleCard
+          v-for="article of articles"
+          :key="article.slug"
+          :article="article"
+        />
+      </div>
+      <Subscribe v-if="false" />
     </div>
 
     <TheFooter />
@@ -20,6 +24,8 @@
 </template>
 
 <script>
+import metatags from '~/common/metatags'
+
 export default {
   async asyncData({ $content, params }) {
     const articles = await $content('articles')
@@ -32,9 +38,10 @@ export default {
       .fetch()
     return {
       articles,
-      tags
+      tags,
     }
-  }
+  },
+  head: metatags.metatags(),
 }
 </script>
 

@@ -106,6 +106,8 @@
 </template>
 <script>
 import ArticleContent from '~/components/ArticleContent.vue'
+import metatags from '~/common/metatags'
+
 export default {
   components: { ArticleContent },
   async asyncData({ $content, params }) {
@@ -132,32 +134,11 @@ export default {
     }
   },
   head() {
-    return {
-      title: this.article.title,
-      meta: [
-        {
-          hid: 'description',
-          name: 'description',
-          content: this.article.description,
-        },
-        { hid: 'og:title', property: 'og:title', content: this.article.title },
-        {
-          hid: 'og:description',
-          property: 'og:description',
-          content: this.article.description,
-        },
-        {
-          hid: 'twitter:title',
-          name: 'twitter:title',
-          content: this.article.title,
-        },
-        {
-          hid: 'twitter:description',
-          name: 'twitter:description',
-          content: this.article.description,
-        },
-      ],
-    }
+    return metatags.metatags({ 
+        title: this.article.title, 
+        description: this.article.description, 
+        author: this.article.author.name 
+    })
   },
   methods: {
     formatDate(date) {

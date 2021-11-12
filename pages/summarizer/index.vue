@@ -64,6 +64,7 @@
 </template>
 <script>
 import summarizer from './summarizer'
+import metatags from '~/common/metatags'
 
 export default {
   data() {
@@ -124,6 +125,7 @@ export default {
           .join('\n')
       )
     },
+    head: metatags.metatags()
   },
 }
 </script>
