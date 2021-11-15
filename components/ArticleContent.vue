@@ -2,7 +2,7 @@
   <div>
     <!--Title-->
     <div class="text-center pt-16 md:pt-32">
-      <p class="text-sm md:text-base text-green-500 font-bold uppercase">
+      <p class="text-sm md:text-base text-indigo-900 font-bold uppercase">
         {{ publishDate }}
         <span v-if="article.serie">
           <span class="text-gray-900"> / </span>
@@ -12,6 +12,7 @@
       <h1 class="font-bold break-normal text-3xl md:text-5xl">
         {{ article.title }}
       </h1>
+      <p class="pt-5 text-gray-600 font-semibold text-xl"> {{ article.description }}</p>
     </div>
 
     <!--image-->
@@ -36,7 +37,7 @@
           "
           style="font-family: Georgia, serif"
         >
-          <nuxt-content :document="article" tag="article" />
+          <nuxt-content :document="article" tag="article" class="prose prose-xl" />
         </div>
 
         <Author :author="article.author" />
@@ -55,7 +56,7 @@ export default {
   computed: {
     publishDate() {
       const options = { year: 'numeric', month: 'long', day: 'numeric' }
-      return new Date(this.article.createdAt).toLocaleDateString('en', options)
+      return new Date(this.article.createdAt).toLocaleDateString('pt', options)
     },
   },
 }

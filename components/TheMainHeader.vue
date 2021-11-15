@@ -1,15 +1,15 @@
 <template>
     <div>
     <TheHeader />
-    <div class="w-full m-0 p-0 bg-cover bg-bottom  bg-gradient-to-r from-gray-600 via-black to-gray-700" 
-        style="height: 60vh; max-height:460px; background-image: url('https://source.unsplash.com/1600x900/?nature,water');">
-        <!-- <div class="container max-w-4xl mx-auto pt-16 md:pt-32 text-center break-normal"> -->
+    <div class="w-full m-0 p-0 bg-cover bg-bottom  bg-gradient-to-tr from-blue-900 via-gray-900 to-gray-900" 
+        style="height: 60vh; max-height:460px;">
+        <div class="container max-w-4xl mx-auto pt-16 md:pt-32 text-center break-normal">
             <!--Title-->
-                <!-- <p class="text-white font-extrabold text-3xl md:text-5xl">
+                <p class="text-white font-extrabold text-3xl md:text-5xl">
                     Gabriel Almeida
-                </p> -->
+                </p>
                 <!-- <p class="text-xl md:text-2xl text-gray-500">Welcome to my Blog</p> -->
-        <!-- </div> -->
+        </div>
     </div>
     </div>
   <!-- <header class="flex">
