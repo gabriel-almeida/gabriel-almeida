@@ -137,7 +137,10 @@ export default {
     return metatags.metatags({ 
         title: this.article.title, 
         description: this.article.description, 
-        author: this.article.author.name 
+        author: this.article.author.name,
+        tags: this.article.tags,
+        canonical: this.article.canonical,
+        published: this.article.published
     })
   },
   methods: {
@@ -148,23 +151,3 @@ export default {
   },
 }
 </script>
-<style>
-.nuxt-content p {
-  margin-bottom: 20px;
-}
-.nuxt-content h2 {
-  font-weight: bold;
-  font-size: 28px;
-}
-.nuxt-content h3 {
-  font-weight: bold;
-  font-size: 22px;
-}
-.icon.icon-link {
-  /* background-image: url('~assets/svg/icon-hashtag.svg'); */
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background-size: 20px 20px;
-}
-</style>

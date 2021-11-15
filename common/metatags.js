@@ -6,7 +6,7 @@ export default {
     author = author || 'Gabriel Almeida'
     description = description || 'Discutindo tecnologia em profundidade'
 
-    return {
+    const result = {
       title,
       meta: [
         {
@@ -42,5 +42,45 @@ export default {
         },
       ],
     }
+
+    if (meta && meta.tags) {
+      result.meta.push({
+        hid: 'keywords',
+        property: 'keywords',
+        content: meta.tags.join(', '),
+      })
+      const ogTags = meta.tags.map((tag, idx) => ({
+        hid: `article:tag-${idx}`,
+        property: 'article:tag',
+        content: tag,
+      }))
+      result.meta.push(...ogTags)
+    }
+
+    if (meta && meta.canonical) {
+      result.meta.push({
+        hid: 'canonical',
+        property: 'canonical',
+        content: meta.canonical,
+      })
+    }
+
+    if (meta && meta.published) {
+      result.meta.push({
+        hid: 'article:published_time',
+        property: 'article:published_time',
+        content: meta.published,
+      })
+    }
+
+    // result.script = [
+    //   {
+    //     type: 'application/ld+json',
+    //     '@context': 'http://schema.org',
+    //     '@type': 'Recipe',
+    //     // More structured data...
+    //   },
+    // ]
+    return result
   },
 }
