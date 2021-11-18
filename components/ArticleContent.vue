@@ -18,7 +18,7 @@
     <!--image-->
     <div
       class="container w-full max-w-6xl mx-auto bg-white bg-cover mt-8 rounded"
-      :style="{ backgroundImage: `url(${article.img})`, height: '75vh' }"
+      :style="{ backgroundImage: `url(${require('assets/images/' + article.img)})`, height: '75vh' }"
     />
 
     <!--Container-->

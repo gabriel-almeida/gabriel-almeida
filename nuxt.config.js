@@ -65,4 +65,10 @@ export default {
   googleAnalytics: {
       id: 'UA-212837248-1'
   },
+
+  publicRuntimeConfig: {
+    baseUrl: process.env.BASE_URL
+  },
+  privateRuntimeConfig: {
+  }
 }

@@ -73,14 +73,64 @@ export default {
       })
     }
 
-    // result.script = [
-    //   {
-    //     type: 'application/ld+json',
-    //     '@context': 'http://schema.org',
-    //     '@type': 'Recipe',
-    //     // More structured data...
-    //   },
-    // ]
+    if (meta && meta.modified) {
+      result.meta.push({
+        hid: 'article:modified_time',
+        property: 'article:modified_time',
+        content: meta.modified,
+      })
+    }
+
+    if (meta && meta.image) {
+      result.meta.push({
+        hid: 'og:image',
+        property: 'og:image',
+        content: meta.image,
+      })
+      result.meta.push({
+        hid: 'twitter:image:src',
+        property: 'twitter:image:src',
+        content: meta.image,
+      })
+    }
+    return result
+  },
+  blogPosting(meta) {
+    const result = this.metatags(meta)
+    const {
+      title,
+      description,
+      author,
+      canonical,
+      published,
+      image = null,
+      modified = null,
+      tags = [],
+    } = meta || {}
+
+    const jsonLd = {
+      '@context': 'http://schema.org',
+      '@type': 'BlogPosting',
+      url: canonical,
+      name: title,
+      headline: title,
+      description,
+      image,
+      datePublished: published,
+      dateCreated: published,
+      author: {
+        '@type': 'Person',
+        name: author,
+        url: 'https://gabrielalmeida.dev',
+      },
+      keywords: tags,
+    }
+
+    if (modified) {
+      jsonLd.dateModified = modified
+    }
+
+    result.script = [{ type: 'application/ld+json', json: jsonLd }]
     return result
   },
 }

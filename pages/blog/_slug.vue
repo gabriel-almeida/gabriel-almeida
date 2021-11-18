@@ -134,13 +134,15 @@ export default {
     }
   },
   head() {
-    return metatags.metatags({ 
+    return metatags.blogPosting({ 
         title: this.article.title, 
         description: this.article.description, 
         author: this.article.author.name,
         tags: this.article.tags,
-        canonical: this.article.canonical,
-        published: this.article.published
+        canonical: this.$config.baseUrl + this.$route.path + "/",
+        published: this.article.published,
+        modified: this.article.modified,
+        image: this.$config.baseUrl + require(`~/assets/images/${this.article.author.img}`)
     })
   },
   methods: {

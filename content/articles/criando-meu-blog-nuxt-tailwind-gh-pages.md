@@ -1,12 +1,11 @@
 ---
 title: Criando meu blog com Nuxt, Tailwind e Github Pages
 description: Um relato da minha sinuosa jornada até o momento
-img: https://source.unsplash.com/3OiYMgDKJ6k/1600x900
+img: old-map.jpg
 author: 
   name: Gabriel Almeida
   bio: Cientista da computação e //TODO bio
-  img: https://www.gravatar.com/avatar/85b998b6557eea53fd8eaf12bdf04c9a
-canonical: https://gabrielalmeida.dev/blog/criando-meu-blog-nuxt-tailwind-gh-pages
+  img: gabriel-almeida.jpg
 tags: 
   - Blog
   - Nuxt JS
@@ -15,12 +14,13 @@ tags:
   - Javascript
   - Tailwind CSS
   - Desenvolvimento de Software
-published: 2021-11-14
+published: 2021-11-14T00:00:00.000-03:00
+modified: 2021-11-17T08:30:00.000-03:00
 ---
 
 ## Isso não é um tutorial
 
-Para começar, precisa ser honesto: este post *não* é um tutorial. Estou tentando contar aqui os altos e baixos, até o momento, de como foi minha experiência de criar um blog do zero, na ordem em que as coisas aconteceram e, especialmente, explicar a racionalidade por trás das decisões.
+Para começar, preciso ser honesto: este post *não* é um tutorial. Estou tentando contar aqui os altos e baixos, até o momento, de como foi minha experiência de criar um blog do zero, na ordem em que as coisas aconteceram e, especialmente, explicar a racionalidade por trás das decisões.
 
 Eu não vou descrever um passo a passo de como fiz as coisas, até porque não sei se conseguiria reproduzir tudo. Esse formato pode ser menos apelativo mas ainda serve como uma lição dos possíveis problemas que alguém pode enfrentar se seguir num caminho similar ao que eu fiz. No fim, a principal lição que a gente tira é que a felicidade do programador sempre é dizer:
 
