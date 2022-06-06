@@ -15,40 +15,48 @@
                 invisible: currentStatus === null,
               }"
             >
-              <span>{{ this.currentStatus ? 'Correto!' : 'Errado!' }}</span>
+              <span>{{ currentStatus ? 'Correto!' : 'Errado!' }}</span>
             </div>
             <div class="card w-96 shadow-xl bg-neutral text-neutral-content">
               <div class="card-body">
-                <p v-if="this.currentQuestion">
-                  {{ this.currentQuestion.content }}
+                <p v-if="currentQuestion">
+                  {{ currentQuestion.content }}
                 </p>
                 <div class="card-actions justify-end">
                   <span v-if="currentQuestion && currentStatus === null">
-                    <a @click="answer(true)" class="btn bg-green-500">Certo</a>
-                    <a @click="answer(false)" class="btn bg-red-500">Errado</a>
+                    <a class="btn bg-green-500" @click="answer(true)">Certo</a>
+                    <a class="btn bg-red-500" @click="answer(false)">Errado</a>
                   </span>
                   <a
-                    @click="nextQuestion()"
                     v-if="temProxima"
                     class="btn bg-gray-500"
+                    @click="nextQuestion()"
                   >
                     Próxima
                   </a>
                 </div>
                 <div>
                   {{ correct }} / {{ answered }} (Faltam
-                  {{ this.questionOrder.length }})
+                  {{ questionOrder.length }})
                 </div>
               </div>
             </div>
             <div>
-              <a @click="reset()" class="underline cursor-pointer">RESET</a>
+              <a class="underline cursor-pointer" @click="reset()">RESET</a>
             </div>
           </div>
         </div>
       </div>
     </div>
     <TheFooter />
+    <audio
+      ref="guitarAudio"
+      :src="require('@/assets/sounds/guitar.ogg').default"
+      preload="auto"
+      loop="true"
+      muted="true"
+      autoplay
+    />
   </div>
 </template>
 <script>
@@ -74,13 +82,13 @@ export default {
       animation: false,
     }
   },
-  created() {
-    this.reset()
-  },
   computed: {
     temProxima() {
       return this.questionOrder.length > 1
     },
+  },
+  created() {
+    this.reset()
   },
   methods: {
     reset() {
@@ -115,10 +123,18 @@ export default {
       this.answered += 1
 
       this.animation = true
-      const animationTime = result? 1500: 500
+      const animationTime = result ? 1300 : 500
       setTimeout(() => {
         this.animation = false
+        this.$refs.guitarAudio.muted = true
       }, animationTime)
+
+      // tenho que dar essa volta toda para garantir que o audio esta carregado e evitar que aconteça delay no clique do botão
+      if (result) {
+        const audio = this.$refs.guitarAudio
+        audio.muted = false
+        audio.currentTime = 0
+      }
 
       return result
     },

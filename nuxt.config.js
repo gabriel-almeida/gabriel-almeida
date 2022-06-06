@@ -60,6 +60,17 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+
+    // https://davidparks.dev/blog/add-sounds-to-your-nuxt-site/
+    extend(config, ctx) {
+        config.module.rules.push({
+          test: /\.(ogg|mp3|wav|mpe?g)$/i,
+          loader: 'file-loader',
+          options: {
+            name: '[path][name].[ext]'
+          }
+        })
+      },
   },
 
   googleAnalytics: {
