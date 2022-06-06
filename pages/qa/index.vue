@@ -9,8 +9,9 @@
             <div
               class="alert shadow-lg mb-2"
               :class="{
-                'alert-error': !currentStatus,
-                'alert-success': currentStatus,
+                'alert-error shake-horizontal': !currentStatus,
+                'alert-success shake-crazy': currentStatus,
+                'shake-constant': animation,
                 invisible: currentStatus === null,
               }"
             >
@@ -70,6 +71,7 @@ export default {
       questionOrder: [],
       currentStatus: null,
       currentQuestion: null,
+      animation: false,
     }
   },
   created() {
@@ -111,6 +113,12 @@ export default {
         this.currentStatus = false
       }
       this.answered += 1
+
+      this.animation = true
+      const animationTime = result? 1500: 500
+      setTimeout(() => {
+        this.animation = false
+      }, animationTime)
 
       return result
     },
