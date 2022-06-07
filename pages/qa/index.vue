@@ -12,7 +12,7 @@
                 'alert-error shake-horizontal': !currentStatus,
                 'alert-success': currentStatus,
                 'shake-vertical': currentStatus && !specialFeedback,
-                'text-xl': combo >=3 && !specialFeedback,
+                'text-xl': combo >= 3 && !specialFeedback,
                 'shake-crazy text-3xl': specialFeedback,
                 'shake-constant': animation,
                 invisible: currentStatus === null,
@@ -55,15 +55,6 @@
       </div>
     </div>
     <TheFooter />
-    <!-- TODO extrair como funcao -->
-    <audio
-      ref="guitarAudio"
-      :src="require('@/assets/sounds/guitar.ogg').default"
-      preload="auto"
-      loop="true"
-      muted="true"
-      autoplay
-    />
   </div>
 </template>
 <script>
@@ -143,21 +134,21 @@ export default {
       this.startFeedback()
       return result
     },
-    startFeedback() {
+    async startFeedback() {
+      if (this.specialFeedback) {
+        const guitarPath = require('~/assets/sounds/guitar.ogg').default
+        const guitar = new Audio(guitarPath)
+        await guitar.play()
+      }
+
       this.animation = true
+      window.scrollTo(0,0)
       const animationTime = this.specialFeedback ? 1300 : 500
 
       setTimeout(() => {
         this.animation = false
-        this.$refs.guitarAudio.muted = true
       }, animationTime)
 
-      // tenho que dar essa volta toda para garantir que o audio esta carregado e evitar que aconteça delay no clique do botão
-      if (this.specialFeedback) {
-        const audio = this.$refs.guitarAudio
-        audio.muted = false
-        audio.currentTime = 0
-      }
     },
     updateQuestion() {
       if (!this.questionOrder) {
