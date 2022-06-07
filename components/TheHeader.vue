@@ -16,6 +16,9 @@
                     <NuxtLink class="inline-block py-2 px-2 text-white no-underline" to="/summarizer">
                         Summarizer
                     </NuxtLink>
+                    <NuxtLink class="inline-block py-2 px-2 text-white no-underline" to="/qa">
+                        QA
+                    </NuxtLink>
 				  </li>
 				</ul>
 			</div>

@@ -10,12 +10,16 @@
               class="alert shadow-lg mb-2"
               :class="{
                 'alert-error shake-horizontal': !currentStatus,
-                'alert-success shake-crazy': currentStatus,
+                'alert-success': currentStatus,
+                'shake-vertical': currentStatus && !specialFeedback,
+                'text-xl': combo >=3 && !specialFeedback,
+                'shake-crazy text-3xl': specialFeedback,
                 'shake-constant': animation,
                 invisible: currentStatus === null,
               }"
             >
-              <span>{{ currentStatus ? 'Correto!' : 'Errado!' }}</span>
+              <template v-if="combo > 1">{{ combo }}x </template>
+              {{ currentStatus ? 'Correto!' : 'Errado!' }}
             </div>
             <div class="card w-auto shadow-xl bg-neutral text-neutral-content">
               <div class="card-body">
@@ -36,8 +40,9 @@
                   </a>
                 </div>
                 <div>
-                  {{ correct }} / {{ answered }} (Faltam
-                  {{ questionOrder.length }})
+                  <span class="text-green-200">Corretas: {{ correct }} </span>
+                  <span class="text-red-400"> Erradas: {{ wrong }} </span>
+                  Faltam: {{ questionOrder.length }}
                 </div>
               </div>
             </div>
@@ -63,6 +68,7 @@
 </template>
 <script>
 import ExcelUpload from './ExcelUpload.vue'
+const COMBO_ANIMATION = 5
 
 export default {
   components: { ExcelUpload },
@@ -79,7 +85,8 @@ export default {
         { content: 'Questao 8', expected: false },
       ],
       correct: 0,
-      answered: 0,
+      wrong: 0,
+      combo: 0,
       currentPosition: 0,
       questionOrder: [],
       currentStatus: null,
@@ -91,6 +98,9 @@ export default {
     temProxima() {
       return this.questionOrder.length > 1
     },
+    specialFeedback() {
+      return this.combo >= COMBO_ANIMATION
+    },
   },
   created() {
     this.reset()
@@ -98,7 +108,8 @@ export default {
   methods: {
     reset() {
       this.correct = 0
-      this.answered = 0
+      this.wrong = 0
+      this.combo = 0
       this.currentPosition = 0
       this.currentStatus = null
       this.createOrder()
@@ -122,26 +133,31 @@ export default {
       if (result) {
         this.correct += 1
         this.currentStatus = true
+        this.combo += 1
       } else {
         this.currentStatus = false
+        this.wrong += 1
+        this.combo = 0
       }
-      this.answered += 1
 
+      this.startFeedback()
+      return result
+    },
+    startFeedback() {
       this.animation = true
-      const animationTime = result ? 1300 : 500
+      const animationTime = this.specialFeedback ? 1300 : 500
+
       setTimeout(() => {
         this.animation = false
         this.$refs.guitarAudio.muted = true
       }, animationTime)
 
       // tenho que dar essa volta toda para garantir que o audio esta carregado e evitar que aconteça delay no clique do botão
-      if (result) {
+      if (this.specialFeedback) {
         const audio = this.$refs.guitarAudio
         audio.muted = false
         audio.currentTime = 0
       }
-
-      return result
     },
     updateQuestion() {
       if (!this.questionOrder) {
@@ -151,9 +167,9 @@ export default {
           this.questions[this.questionOrder[this.currentPosition]]
       }
     },
-    getQuestions(data){
-        this.questions = data
-        this.reset()
+    getQuestions(data) {
+      this.questions = data
+      this.reset()
     },
     createOrder() {
       this.questionOrder = this.shuffle(this.questions.map((_, i) => i))
