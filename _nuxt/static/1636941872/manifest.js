@@ -1,1 +1,0 @@
-__NUXT_JSONP__("manifest.js", {routes:["\u002F","\u002Fsummarizer","\u002Fblog\u002Fcriando-meu-blog-nuxt-tailwind-gh-pages"]})

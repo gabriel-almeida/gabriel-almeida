@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/qa/ExcelUpload", {data:[{}],fetch:{},mutations:void 0});
