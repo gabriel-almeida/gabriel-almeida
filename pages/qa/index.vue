@@ -3,7 +3,7 @@
     <TheHeader />
     <div class="container mx-auto min-h-full">
       <div class="flex flex-row flex-wrap py-4">
-        <div class="w-full md:w-1/4 px-2">
+        <div class="w-full px-2">
           <div class="sticky top-0 p-4 w-full">
             <!-- navigation -->
             <div
@@ -17,7 +17,7 @@
             >
               <span>{{ currentStatus ? 'Correto!' : 'Errado!' }}</span>
             </div>
-            <div class="card w-96 shadow-xl bg-neutral text-neutral-content">
+            <div class="card w-auto shadow-xl bg-neutral text-neutral-content">
               <div class="card-body">
                 <p v-if="currentQuestion">
                   {{ currentQuestion.content }}
@@ -43,12 +43,14 @@
             </div>
             <div>
               <a class="underline cursor-pointer" @click="reset()">RESET</a>
+              <excel-upload @input="getQuestions" />
             </div>
           </div>
         </div>
       </div>
     </div>
     <TheFooter />
+    <!-- TODO extrair como funcao -->
     <audio
       ref="guitarAudio"
       :src="require('@/assets/sounds/guitar.ogg').default"
@@ -60,7 +62,10 @@
   </div>
 </template>
 <script>
+import ExcelUpload from './ExcelUpload.vue'
+
 export default {
+  components: { ExcelUpload },
   data() {
     return {
       questions: [
@@ -145,6 +150,10 @@ export default {
         this.currentQuestion =
           this.questions[this.questionOrder[this.currentPosition]]
       }
+    },
+    getQuestions(data){
+        this.questions = data
+        this.reset()
     },
     createOrder() {
       this.questionOrder = this.shuffle(this.questions.map((_, i) => i))
