@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="file" accept=".xlsx" @change="upload($event)" />
+    <input type="file" accept=".xlsx" class="w-full text-sm" @change="upload($event)" />
   </div>
 </template>
 <script>
@@ -37,11 +37,13 @@ export default {
       sheet.eachRow((row) => {
         const questionCell = row.getCell(1)
         const answerCell = row.getCell(2)
+        const commentCell = row.getCell(3)
 
         const content = questionCell.text
         const expected = this.parseAnswer(answerCell.text)
+        const comment = commentCell.text
 
-        result.push({ content, expected })
+        result.push({ content, expected, comment })
       })
 
       this.$emit('input', result)
