@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <TheHeader />
-    <div class="container mx-auto min-h-full">
+    <div class="container mx-auto min-h-full flex-grow">
       <div class="flex flex-row flex-wrap py-4">
         <div class="w-full px-2">
           <div class="sticky top-0 p-4 w-full">
@@ -13,6 +13,7 @@
                 'alert-success': currentStatus,
                 'shake-vertical': currentStatus && !specialFeedback,
                 'text-xl': combo >= 3 && !specialFeedback,
+                uppercase: combo >= 4,
                 'shake-crazy text-3xl': specialFeedback,
                 'shake-constant': animation,
                 invisible: currentStatus === null,
@@ -49,10 +50,10 @@
                   {{ currentQuestion.content }}
                 </p>
                 <div class="card-actions justify-end">
-                  <span v-if="currentQuestion && currentStatus === null">
+                  <template v-if="currentQuestion && currentStatus === null">
                     <a class="btn bg-green-500" @click="answer(true)">Certo</a>
                     <a class="btn bg-red-500" @click="answer(false)">Errado</a>
-                  </span>
+                  </template>
                   <a
                     v-if="temProxima"
                     class="btn bg-gray-500"
@@ -62,9 +63,15 @@
                   </a>
                 </div>
                 <div>
-                  <span class="text-green-200">Corretas: {{ correct }} </span>
-                  <span class="text-red-400"> Erradas: {{ wrong }} </span>
-                  Faltam: {{ questionOrder.length }}
+                  <span class="text-green-200 inline-block"
+                    >Corretas: {{ correct }}
+                  </span>
+                  <span class="text-red-400 inline-block">
+                    Erradas: {{ wrong }}
+                  </span>
+                  <span class="inline-block">
+                    Faltam: {{ questionOrder.length }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -164,13 +171,12 @@ export default {
       }
 
       this.animation = true
-      window.scrollTo(0,0)
+      window.scrollTo(0, 0)
       const animationTime = this.specialFeedback ? 1300 : 500
 
       setTimeout(() => {
         this.animation = false
       }, animationTime)
-
     },
     updateQuestion() {
       if (!this.questionOrder) {
