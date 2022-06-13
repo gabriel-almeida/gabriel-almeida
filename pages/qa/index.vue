@@ -22,26 +22,9 @@
               <template v-if="combo > 1">{{ combo }}x </template>
               {{ currentStatus ? 'Correto!' : 'Errado!' }}
             </div>
-            <div
+            <comment-card
               v-if="currentStatus === false"
-              class="
-                card
-                w-auto
-                shadow-xl
-                bg-indigo-900 bg-opacity-30
-                text-neutral-content
-                mb-2
-              "
-            >
-              <div class="card-body">
-                <p>
-                  <span class="font-bold"> Resposta: {{ currentQuestion.expected ? 'Certo' : 'Errado' }} </span>
-                </p>
-                <p v-if="currentQuestion.comment">
-                  {{ currentQuestion.comment }}
-                </p>
-              </div>
-            </div>
+              :current-question="currentQuestion" />
             <div
               class="card w-auto shadow-xl bg-neutral text-neutral-content mb-2"
             >
@@ -87,11 +70,12 @@
   </div>
 </template>
 <script>
+import CommentCard from './CommentCard.vue'
 import ExcelUpload from './ExcelUpload.vue'
 const COMBO_ANIMATION = 5
 
 export default {
-  components: { ExcelUpload },
+  components: { ExcelUpload, CommentCard },
   data() {
     return {
       questions: [
