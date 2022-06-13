@@ -6,25 +6,11 @@
         <div class="w-full px-2">
           <div class="sticky top-0 p-4 w-full">
             <!-- navigation -->
-            <div
-              class="alert shadow-lg mb-2"
-              :class="{
-                'alert-error shake-horizontal': !currentStatus,
-                'alert-success': currentStatus,
-                'shake-vertical': currentStatus && !specialFeedback,
-                'text-xl': combo >= 3 && !specialFeedback,
-                uppercase: combo >= 4,
-                'shake-crazy text-3xl': specialFeedback,
-                'shake-constant': animation,
-                invisible: currentStatus === null,
-              }"
-            >
-              <template v-if="combo > 1">{{ combo }}x </template>
-              {{ currentStatus ? 'Correto!' : 'Errado!' }}
-            </div>
+            <answer-feedback :combo="combo" :text="feedbackText" />
             <comment-card
               v-if="currentStatus === false"
-              :current-question="currentQuestion" />
+              :current-question="currentQuestion"
+            />
             <div
               class="card w-auto shadow-xl bg-neutral text-neutral-content mb-2"
             >
@@ -70,12 +56,12 @@
   </div>
 </template>
 <script>
+import AnswerFeedback from './AnswerFeedback.vue'
 import CommentCard from './CommentCard.vue'
 import ExcelUpload from './ExcelUpload.vue'
-const COMBO_ANIMATION = 5
 
 export default {
-  components: { ExcelUpload, CommentCard },
+  components: { ExcelUpload, CommentCard, AnswerFeedback },
   data() {
     return {
       questions: [
@@ -102,8 +88,9 @@ export default {
     temProxima() {
       return this.questionOrder.length > 1
     },
-    specialFeedback() {
-      return this.combo >= COMBO_ANIMATION
+    feedbackText() {
+      if (this.currentStatus === null) return null
+      return this.currentStatus ? 'Correto!' : 'Errado!'
     },
   },
   created() {
@@ -144,23 +131,7 @@ export default {
         this.combo = 0
       }
 
-      this.startFeedback()
       return result
-    },
-    async startFeedback() {
-      if (this.specialFeedback) {
-        const guitarPath = require('~/assets/sounds/guitar.ogg').default
-        const guitar = new Audio(guitarPath)
-        await guitar.play()
-      }
-
-      this.animation = true
-      window.scrollTo(0, 0)
-      const animationTime = this.specialFeedback ? 1300 : 500
-
-      setTimeout(() => {
-        this.animation = false
-      }, animationTime)
     },
     updateQuestion() {
       if (!this.questionOrder) {
