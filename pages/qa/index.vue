@@ -15,9 +15,18 @@
               class="card w-auto shadow-xl bg-neutral text-neutral-content mb-2"
             >
               <div class="card-body">
-                <p v-if="currentQuestion">
-                  {{ currentQuestion.content }}
-                </p>
+                <text-content
+                  v-if="currentQuestion.type === 'boolean'"
+                  :current-question="currentQuestion"
+                />
+                <multi-select-content
+                  v-if="currentQuestion.type === 'multiselect'"
+                  :current-question="currentQuestion"
+                  :show-answer="showAnswer"
+                  @input="inputMultiSelect"
+                />
+                {{currentAnswer}}
+                <a class="btn bg-yellow-500" @click="showAnswer = !showAnswer">Toggle</a>
                 <div class="card-actions justify-end">
                   <template v-if="currentQuestion && currentStatus === null">
                     <a class="btn bg-green-500" @click="answer(true)">Certo</a>
@@ -59,20 +68,43 @@
 import AnswerFeedback from './AnswerFeedback.vue'
 import CommentCard from './CommentCard.vue'
 import ExcelUpload from './ExcelUpload.vue'
+import TextContent from './TextContent.vue'
+import MultiSelectContent from './MultiSelectContent.vue'
 
 export default {
-  components: { ExcelUpload, CommentCard, AnswerFeedback },
+  components: {
+    ExcelUpload,
+    CommentCard,
+    AnswerFeedback,
+    TextContent,
+    MultiSelectContent,
+  },
   data() {
     return {
       questions: [
-        { content: 'Questao 1', expected: true },
-        { content: 'Questao 2', expected: false },
-        { content: 'Questao 3', expected: true },
-        { content: 'Questao 4', expected: false },
-        { content: 'Questao 5', expected: true },
-        { content: 'Questao 6', expected: false },
-        { content: 'Questao 7', expected: true },
-        { content: 'Questao 8', expected: false },
+        { content: 'Questao 1', expected: true, type: 'boolean' },
+        {
+          content: 'Questao 2 - Lorem {{slot1}} dolor {{slot2}} amet.',
+          type: 'multiselect',
+          options: {
+            slot1: [
+              { text: 'ipsum', correct: true },
+              { text: 'consectetur' },
+              { text: 'vivamus' },
+            ],
+            slot2: [
+              { text: 'sit', correct: true },
+              { text: 'adipiscing' },
+              { text: 'elit' },
+            ],
+          },
+        },
+        // { content: 'Questao 3', expected: true },
+        // { content: 'Questao 4', expected: false },
+        // { content: 'Questao 5', expected: true },
+        // { content: 'Questao 6', expected: false },
+        // { content: 'Questao 7', expected: true },
+        // { content: 'Questao 8', expected: false },
       ],
       correct: 0,
       wrong: 0,
@@ -81,7 +113,8 @@ export default {
       questionOrder: [],
       currentStatus: null,
       currentQuestion: null,
-      animation: false,
+      currentAnswer: null,
+      showAnswer: false
     }
   },
   computed: {
@@ -132,6 +165,9 @@ export default {
       }
 
       return result
+    },
+    inputMultiSelect(answer) {
+        this.currentAnswer = answer
     },
     updateQuestion() {
       if (!this.questionOrder) {
