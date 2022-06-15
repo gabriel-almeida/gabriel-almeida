@@ -22,16 +22,35 @@
                 <multi-select-content
                   v-if="currentQuestion.type === 'multiselect'"
                   :current-question="currentQuestion"
-                  :show-answer="showAnswer"
+                  :show-answer="currentStatus !== null"
                   @input="inputMultiSelect"
                 />
-                {{currentAnswer}}
-                <a class="btn bg-yellow-500" @click="showAnswer = !showAnswer">Toggle</a>
                 <div class="card-actions justify-end">
-                  <template v-if="currentQuestion && currentStatus === null">
-                    <a class="btn bg-green-500" @click="answer(true)">Certo</a>
-                    <a class="btn bg-red-500" @click="answer(false)">Errado</a>
+                  <template
+                    v-if="
+                      currentQuestion &&
+                      currentStatus === null &&
+                      currentQuestion.type === 'boolean'
+                    "
+                  >
+                    <a class="btn bg-green-500" @click="answerBoolean(true)"
+                      >Certo</a
+                    >
+                    <a class="btn bg-red-500" @click="answerBoolean(false)"
+                      >Errado</a
+                    >
                   </template>
+                  <a
+                    v-if="
+                      currentQuestion &&
+                      currentStatus === null &&
+                      currentQuestion.type === 'multiselect'
+                    "
+                    class="btn bg-blue-500"
+                    @click="answerMultiselect()"
+                  >
+                    Corrigir
+                  </a>
                   <a
                     v-if="temProxima"
                     class="btn bg-gray-500"
@@ -99,6 +118,22 @@ export default {
             ],
           },
         },
+        {
+          content: 'Questao 3 - Spicy {{1}} bacon ipsum {{2}} amet .',
+          type: 'multiselect',
+          options: {
+            1: [
+              { text: 'jalapeno', correct: true },
+              { text: 'buffalo' },
+              { text: 'turkey ' },
+            ],
+            2: [
+              { text: 'dolor', correct: true },
+              { text: 'ribeye' },
+              { text: 'steak' },
+            ],
+          },
+        },
         // { content: 'Questao 3', expected: true },
         // { content: 'Questao 4', expected: false },
         // { content: 'Questao 5', expected: true },
@@ -114,7 +149,6 @@ export default {
       currentStatus: null,
       currentQuestion: null,
       currentAnswer: null,
-      showAnswer: false
     }
   },
   computed: {
@@ -152,8 +186,16 @@ export default {
       this.currentPosition %= this.questionOrder.length
       this.updateQuestion()
     },
-    answer(response) {
-      const result = response === this.currentQuestion.expected
+    answerBoolean(response) {
+      this.answer(response === this.currentQuestion.expected)
+    },
+    answerMultiselect() {
+      const answers = Object.values(this.currentAnswer || {})
+      const result =
+        answers.length === 0 ? false : answers.every((a) => a.correct)
+      this.answer(result)
+    },
+    answer(result) {
       if (result) {
         this.correct += 1
         this.currentStatus = true
@@ -166,8 +208,8 @@ export default {
 
       return result
     },
-    inputMultiSelect(answer) {
-        this.currentAnswer = answer
+    inputMultiSelect(givenAnswer) {
+      this.currentAnswer = givenAnswer
     },
     updateQuestion() {
       if (!this.questionOrder) {

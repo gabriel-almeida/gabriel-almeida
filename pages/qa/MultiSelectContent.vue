@@ -6,21 +6,29 @@
       </span>
       <template v-if="part.type === 'select' && showAnswer">
         <span
-          :key="part.id"
+          v-if="answers[part.id].given === null"
+          :key="'blank_' + part.id"
+          class="font-bold text-red-500 line-through"
+        >
+          (em branco)
+        </span>
+        <span
+          v-if="answers[part.id].given !== null"
+          :key="'given_' + part.id"
           :class="{
-            'text-green-500': evaluation[part.id].correct,
-            'text-red-500 line-through': !evaluation[part.id].correct,
+            'text-green-500': answers[part.id].correct,
+            'text-red-500 line-through': !answers[part.id].correct,
           }"
           class="font-bold"
         >
-          {{ evaluation[part.id].given }}
+          {{ answers[part.id].given }}
         </span>
         <span
-          v-if="!evaluation[part.id].correct"
-          :key="part.id"
-          class="font-bold underline text-green-500"
+          v-if="!answers[part.id].correct"
+          :key="'correct_' + part.id"
+          class="font-bold underline text-blue-500"
         >
-          {{ evaluation[part.id].allowed.join(' ou ') }}
+          {{ answers[part.id].corrects.join(' ou ') }}
         </span>
       </template>
       <select
@@ -29,14 +37,18 @@
         class="select select-primary select-sm ml-1 mr-1 text-neutral-content"
         @change="changeAnswers($event, part)"
       >
-        <option disabled :selected="!answers[part.id]" :value="null">
+        <option
+          disabled
+          :selected="answers[part.id].given === null"
+          :value="null"
+        >
           Selecione
         </option>
         <option
           v-for="(option, optionIdx) in part.options"
           :key="optionIdx"
           :value="option"
-          :selected="option === answers[part.id]"
+          :selected="option === answers[part.id].given"
         >
           {{ option }}
         </option>
@@ -55,69 +67,64 @@ export default {
   data() {
     return {
       answers: {},
-      evaluation: {},
+      questionParts: [],
     }
   },
-  computed: {
-    questionParts() {
+  computed: {},
+  watch: {
+    currentQuestion() {
+      this.initQuestion()
+    },
+  },
+  mounted() {
+    this.initQuestion()
+  },
+  methods: {
+    initQuestion() {
+      this.questionParts = []
+      this.answers = {}
+
       const { content } = this.currentQuestion
-      if (content == null) return []
+      if (content == null) return
 
       // parseia o conteudo, quebrando entre elementos 'text' e 'select'
       const matches = [...content.matchAll(BLANK_REGEXP)]
-      const parts = []
       let lastIdx = 0
 
       for (const match of matches) {
         const text = content.substring(lastIdx, match.index)
         const id = match[1]
 
-        if (text.length > 0) parts.push({ type: 'text', content: text })
+        if (text.length > 0)
+          this.questionParts.push({ type: 'text', content: text })
 
         const questionOptions = this.currentQuestion.options[id] || []
         const options = questionOptions.map((o) => o.text).sort()
-        const allowed = questionOptions
+
+        const corrects = questionOptions
           .filter((o) => o.correct)
           .map((o) => o.text)
 
-        parts.push({ type: 'select', options, id, allowed })
+        this.questionParts.push({ type: 'select', options, id })
+        this.answers[id] = { corrects, given: null, correct: false }
 
         lastIdx = match.index + match[0].length
       }
 
       if (lastIdx < content.length) {
         const text = content.substring(lastIdx)
-        parts.push({ type: 'text', content: text })
+        this.questionParts.push({ type: 'text', content: text })
       }
-
-      return parts
     },
-  },
-  watch: {
-    currentQuestion() {
-      this.answers = {}
-    },
-    showAnswer() {
-      this.makeEvaluation()
-    },
-  },
-  methods: {
     changeAnswers(event, part) {
-      this.answers[part.id] = event.target.value
-      this.$emit('input', { ...this.answers })
-    },
-    makeEvaluation() {
-      const pairs = this.questionParts
-        .filter((part) => part.type === 'select')
-        .map((part) => [part.id, this.evaluate(part)])
+      const given = event.target.value
+      const answer = this.answers[part.id]
+      const correct = answer.corrects.includes(given)
 
-      this.evaluation = Object.fromEntries(pairs)
-    },
-    evaluate(part) {
-      const given = this.answers[part.id]
-      const allowed = part.allowed
-      const correct = allowed.includes(given)
-      return { given, allowed, correct }
+      this.answers[part.id].correct = correct
+      this.answers[part.id].given = given
+
+      this.$emit('input', { ...this.answers })
     },
   },
 }
