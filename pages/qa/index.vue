@@ -15,14 +15,42 @@
               class="card w-auto shadow-xl bg-neutral text-neutral-content mb-2"
             >
               <div class="card-body">
-                <p v-if="currentQuestion">
-                  {{ currentQuestion.content }}
-                </p>
+                <text-content
+                  v-if="currentQuestion.type === 'boolean'"
+                  :current-question="currentQuestion"
+                />
+                <multi-select-content
+                  v-if="currentQuestion.type === 'multiselect'"
+                  :current-question="currentQuestion"
+                  :show-answer="currentStatus !== null"
+                  @input="inputMultiSelect"
+                />
                 <div class="card-actions justify-end">
-                  <template v-if="currentQuestion && currentStatus === null">
-                    <a class="btn bg-green-500" @click="answer(true)">Certo</a>
-                    <a class="btn bg-red-500" @click="answer(false)">Errado</a>
+                  <template
+                    v-if="
+                      currentQuestion &&
+                      currentStatus === null &&
+                      currentQuestion.type === 'boolean'
+                    "
+                  >
+                    <a class="btn bg-green-500" @click="answerBoolean(true)"
+                      >Certo</a
+                    >
+                    <a class="btn bg-red-500" @click="answerBoolean(false)"
+                      >Errado</a
+                    >
                   </template>
+                  <a
+                    v-if="
+                      currentQuestion &&
+                      currentStatus === null &&
+                      currentQuestion.type === 'multiselect'
+                    "
+                    class="btn bg-blue-500"
+                    @click="answerMultiselect()"
+                  >
+                    Corrigir
+                  </a>
                   <a
                     v-if="temProxima"
                     class="btn bg-gray-500"
@@ -59,21 +87,21 @@
 import AnswerFeedback from './AnswerFeedback.vue'
 import CommentCard from './CommentCard.vue'
 import ExcelUpload from './ExcelUpload.vue'
+import TextContent from './TextContent.vue'
+import MultiSelectContent from './MultiSelectContent.vue'
+import repository from './QuestionRepository'
 
 export default {
-  components: { ExcelUpload, CommentCard, AnswerFeedback },
+  components: {
+    ExcelUpload,
+    CommentCard,
+    AnswerFeedback,
+    TextContent,
+    MultiSelectContent,
+  },
   data() {
     return {
-      questions: [
-        { content: 'Questao 1', expected: true },
-        { content: 'Questao 2', expected: false },
-        { content: 'Questao 3', expected: true },
-        { content: 'Questao 4', expected: false },
-        { content: 'Questao 5', expected: true },
-        { content: 'Questao 6', expected: false },
-        { content: 'Questao 7', expected: true },
-        { content: 'Questao 8', expected: false },
-      ],
+      questions: repository.getQuestions(),
       correct: 0,
       wrong: 0,
       combo: 0,
@@ -81,7 +109,7 @@ export default {
       questionOrder: [],
       currentStatus: null,
       currentQuestion: null,
-      animation: false,
+      currentAnswer: null,
     }
   },
   computed: {
@@ -119,8 +147,16 @@ export default {
       this.currentPosition %= this.questionOrder.length
       this.updateQuestion()
     },
-    answer(response) {
-      const result = response === this.currentQuestion.expected
+    answerBoolean(response) {
+      this.answer(response === this.currentQuestion.expected)
+    },
+    answerMultiselect() {
+      const answers = Object.values(this.currentAnswer || {})
+      const result =
+        answers.length === 0 ? false : answers.every((a) => a.correct)
+      this.answer(result)
+    },
+    answer(result) {
       if (result) {
         this.correct += 1
         this.currentStatus = true
@@ -132,6 +168,9 @@ export default {
       }
 
       return result
+    },
+    inputMultiSelect(givenAnswer) {
+      this.currentAnswer = givenAnswer
     },
     updateQuestion() {
       if (!this.questionOrder) {
