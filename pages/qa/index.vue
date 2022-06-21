@@ -89,6 +89,7 @@ import CommentCard from './CommentCard.vue'
 import ExcelUpload from './ExcelUpload.vue'
 import TextContent from './TextContent.vue'
 import MultiSelectContent from './MultiSelectContent.vue'
+import repository from './QuestionRepository'
 
 export default {
   components: {
@@ -100,47 +101,7 @@ export default {
   },
   data() {
     return {
-      questions: [
-        { content: 'Questao 1', expected: true, type: 'boolean' },
-        {
-          content: 'Questao 2 - Lorem {{slot1}} dolor {{slot2}} amet.',
-          type: 'multiselect',
-          options: {
-            slot1: [
-              { text: 'ipsum', correct: true },
-              { text: 'consectetur' },
-              { text: 'vivamus' },
-            ],
-            slot2: [
-              { text: 'sit', correct: true },
-              { text: 'adipiscing' },
-              { text: 'elit' },
-            ],
-          },
-        },
-        {
-          content: 'Questao 3 - Spicy {{1}} bacon ipsum {{2}} amet .',
-          type: 'multiselect',
-          options: {
-            1: [
-              { text: 'jalapeno', correct: true },
-              { text: 'buffalo' },
-              { text: 'turkey ' },
-            ],
-            2: [
-              { text: 'dolor', correct: true },
-              { text: 'ribeye' },
-              { text: 'steak' },
-            ],
-          },
-        },
-        // { content: 'Questao 3', expected: true },
-        // { content: 'Questao 4', expected: false },
-        // { content: 'Questao 5', expected: true },
-        // { content: 'Questao 6', expected: false },
-        // { content: 'Questao 7', expected: true },
-        // { content: 'Questao 8', expected: false },
-      ],
+      questions: repository.getQuestions(),
       correct: 0,
       wrong: 0,
       combo: 0,
