@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/qa/TextContent", {data:[{}],fetch:{},mutations:void 0});
