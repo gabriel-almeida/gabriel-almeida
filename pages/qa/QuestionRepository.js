@@ -19,17 +19,34 @@ function shuffle(array) {
     return array
 }
 
+function sampleNonAdjacents(array, n) {
+    const indexes = array.map((_, i) => i)
+    const shuffled = shuffle(indexes)
+    const used = new Set()
+    const result = new Set()
+
+    for (const i of shuffled) {
+        if (used.has(i - 1) || used.has(i + 1)) {
+            continue
+        }
+        used.add(i)
+        result.add(array[i])
+        if (result.size === n) break
+    }
+    return result
+}
+
 function repopulate(question, n) {
   const slots = Object.keys(question.options)
   const nSlots = Math.min(slots.length, n)
-  const selectedSlots = shuffle(slots).slice(0, nSlots)
+  const selectedSlots = sampleNonAdjacents(slots, nSlots)
   const options = {}
   let content = question.content
 
   for (const slot of slots) {
     const selected = question.options[slot]
 
-    if (selectedSlots.includes(slot)) {
+    if (selectedSlots.has(slot)) {
       options[slot] = selected
     } else {
       const correct = selected.find((opt) => opt.correct)
