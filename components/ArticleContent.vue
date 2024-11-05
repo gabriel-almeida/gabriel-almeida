@@ -1,45 +1,31 @@
 <template>
   <div>
     <!--Title-->
-    <div class="text-center pt-16 md:pt-32">
-      <p class="text-sm md:text-base text-indigo-900 font-bold uppercase">
+    <div class="text-center pt-16">
+      <p class="text-sm md:text-base text-indigo-300 font-bold uppercase">
         {{ publishDate }}
-        <span v-if="article.serie">
-          <span class="text-gray-900"> / </span>
-          {{ article.serie }}
-        </span>
       </p>
       <h1 class="font-bold break-normal text-3xl md:text-5xl">
         {{ article.title }}
       </h1>
-      <p class="pt-5 text-gray-600 font-semibold text-xl"> {{ article.description }}</p>
+      <p class="pt-5 text-gray-300 font-semibold text-xl">
+        {{ article.description }}
+      </p>
     </div>
 
-    <!--image-->
-    <div
-      class="container w-full max-w-6xl mx-auto bg-white bg-cover mt-8 rounded"
-      :style="{ backgroundImage: `url(${require('assets/images/' + article.img)})`, height: '75vh' }"
-    />
-
     <!--Container-->
-    <div class="container max-w-5xl mx-auto -mt-32">
+    <div class="container max-w-6xl mx-auto">
       <div class="mx-0 sm:mx-6">
         <div
-          class="
-            bg-white
-            w-full
-            p-8
-            md:p-24
-            text-xl
-            md:text-2xl
-            text-gray-800
-            leading-normal
-          "
+          class="w-full p-8 md:p-24 text-xl md:text-2xl leading-normal"
           style="font-family: Georgia, serif"
         >
-          <nuxt-content :document="article" tag="article" class="prose prose-xl" />
+          <nuxt-content
+            :document="article"
+            tag="article"
+            class="prose-blue prose-xl"
+          />
         </div>
-
         <Author :author="article.author" />
       </div>
     </div>
