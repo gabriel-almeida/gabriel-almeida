@@ -1,16 +1,16 @@
 <template>
   <div>
     <!--Title-->
-    <div class="text-center pt-16">
+    <div class="text-center pt-16 break-words p-2">
       <p class="text-sm md:text-base text-indigo-300 font-bold uppercase">
         {{ publishDate }}
       </p>
       <h1 class="font-bold break-normal text-3xl md:text-5xl">
         {{ article.title }}
       </h1>
-      <p class="pt-5 text-gray-300 font-semibold text-xl">
+      <h2 class="pt-5 text-gray-400 font-semibold text-xl">
         {{ article.description }}
-      </p>
+      </h2>
       <p class="pt-5 text-indigo-300 font-semibold text-xl">
         {{ article.tags.join(', ') }}
       </p>
@@ -26,7 +26,7 @@
           <nuxt-content
             :document="article"
             tag="article"
-            class="prose-blue prose-xl"
+            class="prose-blue prose-xl break-words"
           />
         </div>
         <Author :author="article.author" />
