@@ -1,6 +1,6 @@
 <template>
   <!-- <div class="m-8"> -->
-  <div>
+    <div class="w-full m-0 p-0 bg-cover bg-bottom  bg-gradient-to-tr from-blue-900 via-gray-900 to-gray-900">
     <TheMainHeader />
 
     <div class="container px-4 md:px-0 max-w-6xl mx-auto">

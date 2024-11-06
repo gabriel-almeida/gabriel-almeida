@@ -3,7 +3,7 @@
     <div
       class="
         flex-1
-        bg-gray-800
+        bg-gray-700
         rounded-t rounded-b-none
         overflow-hidden
         shadow-lg
