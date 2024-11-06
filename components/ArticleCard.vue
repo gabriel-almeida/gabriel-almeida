@@ -17,6 +17,9 @@
           {{ article.description }}
         </p>
       </NuxtLink>
+      <p class="text-indigo-300 font-serif text-base px-6 mb-5">
+        {{ article.tags.join(', ') }}
+      </p>
     </div>
   </div>
 </template>

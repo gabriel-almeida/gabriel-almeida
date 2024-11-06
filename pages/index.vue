@@ -29,8 +29,8 @@ import metatags from '~/common/metatags'
 export default {
   async asyncData({ $content, params }) {
     const articles = await $content('articles')
-      .only(['title', 'description', 'img', 'slug', 'author'])
-      .sortBy('createdAt', 'desc')
+      .only(['title', 'description', 'img', 'slug', 'author', 'tags'])
+      .sortBy('published', 'desc')
       .fetch()
     const tags = await $content('tags')
       .only(['name', 'description', 'img', 'slug'])

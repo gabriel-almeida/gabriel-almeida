@@ -11,6 +11,9 @@
       <p class="pt-5 text-gray-300 font-semibold text-xl">
         {{ article.description }}
       </p>
+      <p class="pt-5 text-indigo-300 font-semibold text-xl">
+        {{ article.tags.join(', ') }}
+      </p>
     </div>
 
     <!--Container-->
