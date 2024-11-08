@@ -6,7 +6,7 @@
       :alt="author.name"
     />
     <div class="flex-1">
-      <p class="text-base font-bold md:text-xl leading-none">
+      <p class="text-base font-bold md:text-xl leading-none text-white">
         {{ author.name }}
       </p>
       <p class="text-gray-300 text-xs md:text-base">{{ author.bio }}</p>
@@ -24,4 +24,3 @@ export default {
   },
 }
 </script>
-

@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="bg-gray-700">
     <!--Title-->
     <div class="text-center pt-16 break-words p-2">
       <p class="text-sm md:text-base text-indigo-300 font-bold uppercase">
         {{ publishDate }}
       </p>
-      <h1 class="font-bold break-normal text-3xl md:text-5xl">
+      <h1 class="font-bold break-normal text-3xl md:text-5xl text-white">
         {{ article.title }}
       </h1>
       <h2 class="pt-5 text-gray-400 font-semibold text-xl">
@@ -20,13 +20,13 @@
     <div class="container max-w-6xl mx-auto">
       <div class="mx-0 sm:mx-6">
         <div
-          class="w-full p-8 md:p-24 text-xl md:text-2xl leading-normal"
+          class="w-full p-4 md:p-12 text-xl md:text-2xl leading-normal"
           style="font-family: Georgia, serif"
         >
           <nuxt-content
             :document="article"
             tag="article"
-            class="prose-blue prose-xl break-words"
+            class="prose-green prose-xl break-words text-white"
           />
         </div>
         <Author :author="article.author" />
