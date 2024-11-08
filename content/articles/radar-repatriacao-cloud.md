@@ -9,7 +9,7 @@ author:
 tags:
   - Arquitetura
   - Repatriação de cloud
-  - Computação em núvem
+  - Computação em nuvem
 published: 2024-11-08T10:00:00.000-03:00
 modified: 2024-11-08T10:00:00.000-03:00
 ---
