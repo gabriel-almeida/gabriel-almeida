@@ -9,20 +9,16 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-  ],
+  css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-  ],
+  plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -35,7 +31,6 @@ export default {
     '@nuxtjs/stylelint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/google-analytics'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -49,37 +44,31 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'pt-BR'
-    }
+      lang: 'pt-BR',
+    },
   },
 
   // Content module configuration: https://go.nuxtjs.dev/config-content
   content: {
-    nestedProperties: ['author.name']
+    nestedProperties: ['author.name'],
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-
     // https://davidparks.dev/blog/add-sounds-to-your-nuxt-site/
     extend(config, ctx) {
-        config.module.rules.push({
-          test: /\.(ogg|mp3|wav|mpe?g)$/i,
-          loader: 'file-loader',
-          options: {
-            name: '[path][name].[ext]'
-          }
-        })
-      },
-  },
-
-  googleAnalytics: {
-      id: 'UA-212837248-1'
+      config.module.rules.push({
+        test: /\.(ogg|mp3|wav|mpe?g)$/i,
+        loader: 'file-loader',
+        options: {
+          name: '[path][name].[ext]',
+        },
+      })
+    },
   },
 
   publicRuntimeConfig: {
-    baseUrl: process.env.BASE_URL
+    baseUrl: process.env.BASE_URL,
   },
-  privateRuntimeConfig: {
-  }
+  privateRuntimeConfig: {},
 }
