@@ -29,6 +29,22 @@
             class="prose-green prose-xl break-words text-white"
           />
         </div>
+        <!-- TODO: Isolar em um componente quando tiver mais de uma série -->
+        <aside
+          class="
+            rounded-t rounded-b-none
+            shadow-lg
+            p-7
+            md:mx-10
+            mx-2
+            text-lg text-gray-200
+            bg-green-900
+          "
+          v-if="article.title.startsWith('Radar: ')"
+        >
+          Radar é uma série na qual eu resumo conteúdos que achei interessantes.
+          Funciona como um arquivo público das minhas anotações pessoais.
+        </aside>
         <Author :author="article.author" />
       </div>
     </div>
