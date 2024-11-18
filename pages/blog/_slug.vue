@@ -1,9 +1,9 @@
 <template>
   <div>
-      <TheHeader />
-      <ArticleContent :article="article" />
-      <Subscribe v-if="false" />
-      <TheFooter />
+    <TheHeader />
+    <ArticleContent :article="article" />
+    <Subscribe v-if="false" />
+    <TheFooter />
   </div>
   <!-- <article
     class="flex lg:h-screen w-screen lg:overflow-hidden xs:flex-col lg:flex-row"
@@ -134,15 +134,17 @@ export default {
     }
   },
   head() {
-    return metatags.blogPosting({ 
-        title: this.article.title, 
-        description: this.article.description, 
-        author: this.article.author.name,
-        tags: this.article.tags,
-        canonical: this.$config.baseUrl + this.$route.path + "/",
-        published: this.article.published,
-        modified: this.article.modified,
-        image: this.$config.baseUrl + require(`~/assets/images/${this.article.author.img}`)
+    return metatags.blogPosting({
+      title: this.article.title,
+      description: this.article.description,
+      author: this.article.author.name,
+      tags: this.article.tags,
+      canonical: this.$config.baseUrl + this.$route.path + '/',
+      published: this.article.published,
+      modified: this.article.modified,
+      image:
+        this.$config.baseUrl +
+        require(`~/assets/images/${this.article.author.img}`),
     })
   },
   methods: {

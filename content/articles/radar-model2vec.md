@@ -16,9 +16,9 @@ modified: 2024-11-17T22:00:00.000-03:00
 ---
 
 Fontes:
-[https://github.com/MinishLab/model2vec]
-[https://minishlab.github.io/hf_blogpost/]
-[https://www.youtube.com/watch?v=Ymn5RVaKQA0&pp=ygUJbW9kZWwydmVj]
+[[Github](https://github.com/MinishLab/model2vec)]
+[[Post original](https://minishlab.github.io/hf_blogpost/)]
+[[Explicação em vídeo](https://www.youtube.com/watch?v=Ymn5RVaKQA0&pp=ygUJbW9kZWwydmVj)]
 
 Esses caras criaram um embeddings de palavras, e não de frases, melhores e mais rápidos que as técnicas clássicas estilo GloVe, usando os embeddings de um LLM.
 
